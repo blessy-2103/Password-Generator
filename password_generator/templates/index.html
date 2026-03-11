@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Password Generator</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Strong Password Generator</h1>
+
+<form method="POST">
+
+<label>Password Length</label>
+<input type="number" name="length" required>
+
+<div class="options">
+<label><input type="checkbox" name="numbers"> Include Numbers</label>
+<label><input type="checkbox" name="symbols"> Include Symbols</label>
+</div>
+
+<button type="submit">Generate Password</button>
+
+</form>
+
+{% if password %}
+
+<h2>Your Password</h2>
+
+<input type="password" id="passwordBox" value="{{password}}" readonly>
+
+<br>
+
+<button onclick="togglePassword()">Show / Hide</button>
+<button onclick="copyPassword()">Copy Password</button>
+
+<div class="strength-container">
+<div id="strengthBar"></div>
+</div>
+
+<p id="strengthText"></p>
+
+{% endif %}
+
+<br>
+
+<a href="/history">
+<button>View Password History</button>
+</a>
+
+</div>
+
+<script>
+
+function togglePassword(){
+
+let pass = document.getElementById("passwordBox");
+
+if(pass.type === "password"){
+pass.type = "text";
+}else{
+pass.type = "password";
+}
+
+}
+
+function copyPassword(){
+
+let pass = document.getElementById("passwordBox");
+
+pass.select();
+
+document.execCommand("copy");
+
+alert("Password Copied!");
+
+}
+
+function checkStrength(password){
+
+let bar = document.getElementById("strengthBar");
+let text = document.getElementById("strengthText");
+
+let strength = 0;
+
+if(password.length >= 8) strength++;
+if(/[A-Z]/.test(password)) strength++;
+if(/[0-9]/.test(password)) strength++;
+if(/[^A-Za-z0-9]/.test(password)) strength++;
+
+if(strength <= 1){
+bar.style.width="25%";
+bar.style.background="red";
+text.innerHTML="Weak Password";
+}
+
+else if(strength == 2){
+bar.style.width="50%";
+bar.style.background="orange";
+text.innerHTML="Medium Password";
+}
+
+else if(strength == 3){
+bar.style.width="75%";
+bar.style.background="yellowgreen";
+text.innerHTML="Strong Password";
+}
+
+else{
+bar.style.width="100%";
+bar.style.background="green";
+text.innerHTML="Very Strong Password";
+}
+
+}
+
+let generatedPassword = document.getElementById("passwordBox");
+
+if(generatedPassword){
+checkStrength(generatedPassword.value);
+}
+
+</script>
+
+</body>
+</html>
